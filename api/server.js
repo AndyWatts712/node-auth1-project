@@ -1,5 +1,4 @@
 const express = require('express')
-const router = require('../auth/auth-router')
 const authRouter = require('../auth/auth-router')
 const bcryptjs = require('bcryptjs')
 const session = require('express-session')
@@ -9,7 +8,7 @@ const connection = require('../database/connection')
 
 server.use(express.json())
 
-server.use('/api/', authRouter)
+
 
 const sessionConfig = {
     name: "monster",
@@ -32,6 +31,7 @@ const sessionConfig = {
 
 server.use(session(sessionConfig))
 
+server.use('/api/', authRouter)
 
 server.get('/', (req, res) => {
     const password = req.headers.password;
@@ -39,7 +39,7 @@ server.get('/', (req, res) => {
     // the higher the rounds number the more secure the password is
     const rounds = process.env.BCRYPT_ROUNDS || 4; // as high as possible in production
     const hash = bcryptjs.hashSync(password, rounds);
-    res.json({ api: "up", password, hash });
+    res.json({ api: "up", password, hash, session: req.session });
 })
 
 module.exports = server
