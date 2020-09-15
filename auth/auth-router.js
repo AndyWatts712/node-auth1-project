@@ -46,9 +46,28 @@ router.post('/login', (req, res) => {
     }
 })
 
+router.get('/users', protected, (req, res) => {
+Users.getUsers()
+    .then(users => {
+        res.status(200).json({ data: users})
+    })
+    .catch(err => {
+        res.status(500).json({error: err.message})
+    })
+        
+})
+
 function validateUser(user) {
     return user.username && user.password ? true : false
 }
+
+function protected(req, res, next) {
+    if (req.session && req.session.username) {
+      next();
+    } else {
+      res.status(401).json({ message: 'you shall not pass!!' });
+    }
+  }
 
 
 module.exports = router
